@@ -17,7 +17,7 @@
                 "--is_training",
                 "1",
                 "--root_path",
-                "G:/KebingXUE/github/TS_Forecasting/dataset/weather/",
+                "D:/work/github/TS_Forecasting/dataset/weather/",
                 "--data_path",
                 "weather.csv",
                 "--model_id",
@@ -59,7 +59,7 @@
                 "--itr",
                 "1",
                 "--batch_size",
-                "128",
+                "16",
                 "--learning_rate",
                 "0.0001"
             ],

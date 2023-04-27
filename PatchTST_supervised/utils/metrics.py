@@ -13,15 +13,17 @@ def CORR(pred, true):
 
 
 def MAE(pred, true):
-    return np.mean(np.abs(pred - true))
+    res = np.abs(pred - true)
+    return np.mean(res), np.mean(res,(0,1))
 
 
 def MSE(pred, true):
-    return np.mean((pred - true) ** 2)
+    res = (pred - true) ** 2
+    return np.mean(res), np.mean(res, (0,1))
 
 
 def RMSE(pred, true):
-    return np.sqrt(MSE(pred, true))
+    return np.sqrt(MSE(pred, true)[0])
 
 
 def MAPE(pred, true):
@@ -33,12 +35,12 @@ def MSPE(pred, true):
 
 
 def metric(pred, true):
-    mae = MAE(pred, true)
-    mse = MSE(pred, true)
+    mae, maeCla = MAE(pred, true)
+    mse, mseCla = MSE(pred, true)
     rmse = RMSE(pred, true)
     mape = MAPE(pred, true)
     mspe = MSPE(pred, true)
     rse = RSE(pred, true)
     corr = CORR(pred, true)
 
-    return mae, mse, rmse, mape, mspe, rse, corr
+    return mae, mse, rmse, mape, mspe, rse, corr, maeCla, mseCla
