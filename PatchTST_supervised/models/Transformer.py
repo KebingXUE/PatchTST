@@ -20,7 +20,7 @@ class Model(nn.Module):
         
         self.enc_embedding = nn.Linear(1, configs.d_model)
         self.dec_embedding = nn.Linear(1, configs.d_model)
-        self.output_project = nn.Linear(configs.d_model, 1)
+        self.output_project = nn.Linear(configs.d_model*configs.seq_len, configs.pred_len)
 
         # Encoder
         self.encoder = Encoder(
@@ -66,13 +66,16 @@ class Model(nn.Module):
         enc_out = rearrange(enc_out,'b tsL c modelD -> (b c) tsL modelD')
         enc_out, attns = self.encoder(enc_out, attn_mask=enc_self_mask)
 
-        dec_out = self.dec_embedding(x_dec.unsqueeze(-1))
-        dec_out = rearrange(dec_out,'b tsL c modelD -> (b c) tsL modelD')
-        dec_out = self.decoder(dec_out, enc_out, x_mask=dec_self_mask, cross_mask=dec_enc_mask)
+        # dec_out = self.dec_embedding(x_dec.unsqueeze(-1))
+        # dec_out = rearrange(dec_out,'b tsL c modelD -> (b c) tsL modelD')
+        # dec_out = self.decoder(dec_out, enc_out, x_mask=dec_self_mask, cross_mask=dec_enc_mask)
 
-        dec_out = self.output_project(dec_out).squeeze().reshape(b, c, -1).permute(0,2,1)
+        # dec_out = self.output_project(dec_out).squeeze().reshape(b, c, -1).permute(0,2,1)
 
-        if self.output_attention:
-            return dec_out[:, -self.pred_len:, :], attns
-        else:
-            return dec_out[:, -self.pred_len:, :]  # [B, L, D]
+        dec_out = self.output_project(torch.flatten(enc_out,-2)).reshape(b,c,self.pred_len).permute(0,2,1)
+
+        # if self.output_attention:
+        #     return dec_out[:, -self.pred_len:, :], attns
+        # else:
+        #     return dec_out[:, -self.pred_len:, :]  # [B, L, D]
+        return dec_out
